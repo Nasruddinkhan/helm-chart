@@ -1,0 +1,83 @@
+oracle:
+  enabled: true
+  config:
+    data:
+      ORACLE_HOST: oracle-prod.example.com
+      ORACLE_PORT: "1521"
+      ORACLE_SERVICE_NAME: PRODDB
+      ORACLE_JDBC_URL: jdbc:oracle:thin:@//oracle-prod.example.com:1521/PRODDB
+  secret:
+    create: false
+    existingSecret: oracle-credentials
+
+workloads:
+  application:
+    replicaCount: 2
+    image:
+      repository: your-registry/application
+      tag: stable
+    config:
+      data:
+        SPRING_PROFILES_ACTIVE: prod
+        CONFIG_SERVICE_URL: http://application-stack-config-service:8888
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+    ingress:
+      enabled: false
+      hosts:
+        - host: application.example.com
+          paths:
+            - path: /
+              pathType: Prefix
+
+  configService:
+    replicaCount: 2
+    image:
+      repository: your-registry/config-service
+      tag: stable
+    config:
+      data:
+        SPRING_PROFILES_ACTIVE: prod
+        SERVER_PORT: "8888"
+    resources:
+      requests:
+        cpu: 100m
+        memory: 256Mi
+      limits:
+        cpu: 500m
+        memory: 512Mi
+    ingress:
+      enabled: false
+      hosts:
+        - host: config-service.example.com
+          paths:
+            - path: /
+              pathType: Prefix
+
+  ui:
+    replicaCount: 2
+    image:
+      repository: your-registry/ui
+      tag: stable
+    config:
+      data:
+        API_BASE_URL: http://application-stack-application
+    resources:
+      requests:
+        cpu: 50m
+        memory: 128Mi
+      limits:
+        cpu: 250m
+        memory: 256Mi
+    ingress:
+      enabled: false
+      hosts:
+        - host: ui.example.com
+          paths:
+            - path: /
+              pathType: Prefix

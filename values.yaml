@@ -1,0 +1,298 @@
+# Override chart naming.
+nameOverride: ""
+fullnameOverride: ""
+
+global:
+  imagePullSecrets: []
+  podAnnotations: {}
+  podLabels: {}
+
+serviceAccount:
+  create: true
+  annotations: {}
+  name: ""
+
+oracle:
+  enabled: true
+
+  config:
+    create: true
+    existingConfigMap: ""
+    data:
+      ORACLE_HOST: oracle.example.com
+      ORACLE_PORT: "1521"
+      ORACLE_SERVICE_NAME: ORCLPDB1
+      ORACLE_JDBC_URL: jdbc:oracle:thin:@//oracle.example.com:1521/ORCLPDB1
+
+  secret:
+    create: true
+    existingSecret: ""
+    type: Opaque
+    data: {}
+    stringData:
+      ORACLE_USERNAME: app_user
+      ORACLE_PASSWORD: change-me
+
+workloads:
+  application:
+    enabled: true
+    name: application
+    replicaCount: 1
+
+    image:
+      repository: your-registry/application
+      tag: latest
+      pullPolicy: IfNotPresent
+
+    command: []
+    args: []
+    containerPort: 8080
+
+    env: []
+    envFrom: []
+
+    oracle:
+      enabled: true
+
+    config:
+      enabled: true
+      mountAsEnv: true
+      data:
+        SPRING_PROFILES_ACTIVE: prod
+        CONFIG_SERVICE_URL: http://application-stack-config-service:8888
+
+    secret:
+      enabled: false
+      type: Opaque
+      data: {}
+      stringData: {}
+
+    service:
+      enabled: true
+      type: ClusterIP
+      port: 80
+      targetPort: http
+      annotations: {}
+
+    ingress:
+      enabled: false
+      className: ""
+      annotations: {}
+      hosts:
+        - host: application.local
+          paths:
+            - path: /
+              pathType: Prefix
+      tls: []
+
+    probes:
+      liveness:
+        enabled: true
+        path: /actuator/health/liveness
+        initialDelaySeconds: 30
+        periodSeconds: 10
+        timeoutSeconds: 5
+        failureThreshold: 3
+      readiness:
+        enabled: true
+        path: /actuator/health/readiness
+        initialDelaySeconds: 15
+        periodSeconds: 10
+        timeoutSeconds: 5
+        failureThreshold: 3
+
+    resources: {}
+
+    autoscaling:
+      enabled: false
+      minReplicas: 1
+      maxReplicas: 3
+      targetCPUUtilizationPercentage: 80
+      targetMemoryUtilizationPercentage: null
+
+    podAnnotations: {}
+    podLabels: {}
+    podSecurityContext: {}
+    securityContext: {}
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+    volumes: []
+    volumeMounts: []
+    initContainers: []
+    sidecars: []
+
+  configService:
+    enabled: true
+    name: config-service
+    replicaCount: 1
+
+    image:
+      repository: your-registry/config-service
+      tag: latest
+      pullPolicy: IfNotPresent
+
+    command: []
+    args: []
+    containerPort: 8888
+
+    env: []
+    envFrom: []
+
+    oracle:
+      enabled: false
+
+    config:
+      enabled: true
+      mountAsEnv: true
+      data:
+        SPRING_PROFILES_ACTIVE: prod
+        SERVER_PORT: "8888"
+
+    secret:
+      enabled: false
+      type: Opaque
+      data: {}
+      stringData: {}
+
+    service:
+      enabled: true
+      type: ClusterIP
+      port: 8888
+      targetPort: http
+      annotations: {}
+
+    ingress:
+      enabled: false
+      className: ""
+      annotations: {}
+      hosts:
+        - host: config-service.local
+          paths:
+            - path: /
+              pathType: Prefix
+      tls: []
+
+    probes:
+      liveness:
+        enabled: true
+        path: /actuator/health/liveness
+        initialDelaySeconds: 30
+        periodSeconds: 10
+        timeoutSeconds: 5
+        failureThreshold: 3
+      readiness:
+        enabled: true
+        path: /actuator/health/readiness
+        initialDelaySeconds: 15
+        periodSeconds: 10
+        timeoutSeconds: 5
+        failureThreshold: 3
+
+    resources: {}
+
+    autoscaling:
+      enabled: false
+      minReplicas: 1
+      maxReplicas: 3
+      targetCPUUtilizationPercentage: 80
+      targetMemoryUtilizationPercentage: null
+
+    podAnnotations: {}
+    podLabels: {}
+    podSecurityContext: {}
+    securityContext: {}
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+    volumes: []
+    volumeMounts: []
+    initContainers: []
+    sidecars: []
+
+  ui:
+    enabled: true
+    name: ui
+    replicaCount: 1
+
+    image:
+      repository: your-registry/ui
+      tag: latest
+      pullPolicy: IfNotPresent
+
+    command: []
+    args: []
+    containerPort: 80
+
+    env: []
+    envFrom: []
+
+    oracle:
+      enabled: false
+
+    config:
+      enabled: true
+      mountAsEnv: true
+      data:
+        API_BASE_URL: http://application-stack-application
+
+    secret:
+      enabled: false
+      type: Opaque
+      data: {}
+      stringData: {}
+
+    service:
+      enabled: true
+      type: ClusterIP
+      port: 80
+      targetPort: http
+      annotations: {}
+
+    ingress:
+      enabled: false
+      className: ""
+      annotations: {}
+      hosts:
+        - host: ui.local
+          paths:
+            - path: /
+              pathType: Prefix
+      tls: []
+
+    probes:
+      liveness:
+        enabled: true
+        path: /
+        initialDelaySeconds: 15
+        periodSeconds: 10
+        timeoutSeconds: 5
+        failureThreshold: 3
+      readiness:
+        enabled: true
+        path: /
+        initialDelaySeconds: 5
+        periodSeconds: 10
+        timeoutSeconds: 5
+        failureThreshold: 3
+
+    resources: {}
+
+    autoscaling:
+      enabled: false
+      minReplicas: 1
+      maxReplicas: 3
+      targetCPUUtilizationPercentage: 80
+      targetMemoryUtilizationPercentage: null
+
+    podAnnotations: {}
+    podLabels: {}
+    podSecurityContext: {}
+    securityContext: {}
+    nodeSelector: {}
+    tolerations: []
+    affinity: {}
+    volumes: []
+    volumeMounts: []
+    initContainers: []
+    sidecars: []

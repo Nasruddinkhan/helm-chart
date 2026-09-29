@@ -1,0 +1,10 @@
+.DS_Store
+*.tmp
+*.bak
+
+# Helm package output
+*.tgz
+
+# Local Kubernetes tooling
+.kube/
+kubeconfig*

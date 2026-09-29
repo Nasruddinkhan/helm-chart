@@ -1,0 +1,17 @@
+{{- $fullname := include "application-stack.fullname" . -}}
+{{- range $key, $workload := .Values.workloads }}
+{{- if ne $workload.enabled false }}
+{{- $service := default (dict) $workload.service }}
+{{ include "application-stack.workloadName" (list $ $key $workload) }}:
+  Deployment: {{ include "application-stack.workloadFullname" (list $ $key $workload) }}
+  {{- if ne $service.enabled false }}
+  Service: {{ include "application-stack.workloadFullname" (list $ $key $workload) }}:{{ default 80 $service.port }}
+  {{- end }}
+{{- end }}
+{{- end }}
+
+{{- if eq .Values.oracle.enabled true }}
+Oracle:
+  ConfigMap: {{ include "application-stack.oracleConfigMapName" . }}
+  Secret: {{ include "application-stack.oracleSecretName" . }}
+{{- end }}

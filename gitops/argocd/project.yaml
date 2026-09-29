@@ -1,0 +1,20 @@
+apiVersion: argoproj.io/v1alpha1
+kind: AppProject
+metadata:
+  name: application-stack
+  namespace: argocd
+spec:
+  description: Application and config-service Helm deployments.
+  sourceRepos:
+    - git@github.com:Nasruddinkhan/helm-chart.git
+  destinations:
+    - namespace: application-dev
+      server: https://kubernetes.default.svc
+    - namespace: application-prod
+      server: https://kubernetes.default.svc
+  clusterResourceWhitelist:
+    - group: ""
+      kind: Namespace
+  namespaceResourceWhitelist:
+    - group: "*"
+      kind: "*"

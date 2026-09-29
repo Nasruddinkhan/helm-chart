@@ -1,0 +1,64 @@
+oracle:
+  enabled: true
+  config:
+    data:
+      ORACLE_HOST: oracle-dev.example.com
+      ORACLE_PORT: "1521"
+      ORACLE_SERVICE_NAME: DEVDB
+      ORACLE_JDBC_URL: jdbc:oracle:thin:@//oracle-dev.example.com:1521/DEVDB
+  secret:
+    create: true
+    stringData:
+      ORACLE_USERNAME: app_user
+      ORACLE_PASSWORD: change-me
+
+workloads:
+  application:
+    replicaCount: 1
+    image:
+      repository: your-registry/application
+      tag: dev
+    config:
+      data:
+        SPRING_PROFILES_ACTIVE: dev
+        CONFIG_SERVICE_URL: http://application-stack-config-service:8888
+    ingress:
+      enabled: false
+      hosts:
+        - host: application.dev.local
+          paths:
+            - path: /
+              pathType: Prefix
+
+  configService:
+    replicaCount: 1
+    image:
+      repository: your-registry/config-service
+      tag: dev
+    config:
+      data:
+        SPRING_PROFILES_ACTIVE: dev
+        SERVER_PORT: "8888"
+    ingress:
+      enabled: false
+      hosts:
+        - host: config-service.dev.local
+          paths:
+            - path: /
+              pathType: Prefix
+
+  ui:
+    replicaCount: 1
+    image:
+      repository: your-registry/ui
+      tag: dev
+    config:
+      data:
+        API_BASE_URL: http://application-stack-application
+    ingress:
+      enabled: false
+      hosts:
+        - host: ui.dev.local
+          paths:
+            - path: /
+              pathType: Prefix

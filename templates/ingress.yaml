@@ -1,0 +1,40 @@
+{{- range $key, $workload := .Values.workloads }}
+{{- $ingress := default (dict) $workload.ingress }}
+{{- $service := default (dict) $workload.service }}
+{{- if and (ne $workload.enabled false) (eq $ingress.enabled true) (ne $service.enabled false) }}
+---
+apiVersion: networking.k8s.io/v1
+kind: Ingress
+metadata:
+  name: {{ include "application-stack.workloadFullname" (list $ $key $workload) }}
+  labels:
+    {{- include "application-stack.workloadLabels" (list $ $key $workload) | nindent 4 }}
+  {{- with $ingress.annotations }}
+  annotations:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+spec:
+  {{- with $ingress.className }}
+  ingressClassName: {{ . }}
+  {{- end }}
+  {{- with $ingress.tls }}
+  tls:
+    {{- toYaml . | nindent 4 }}
+  {{- end }}
+  rules:
+    {{- range $ingress.hosts }}
+    - host: {{ .host | quote }}
+      http:
+        paths:
+          {{- range .paths }}
+          - path: {{ .path }}
+            pathType: {{ default "Prefix" .pathType }}
+            backend:
+              service:
+                name: {{ include "application-stack.workloadFullname" (list $ $key $workload) }}
+                port:
+                  number: {{ default 80 $service.port }}
+          {{- end }}
+    {{- end }}
+{{- end }}
+{{- end }}

@@ -1,0 +1,13 @@
+{{- $oracle := default (dict) .Values.oracle }}
+{{- $config := default (dict) $oracle.config }}
+{{- if and (eq $oracle.enabled true) (ne $config.create false) (not $config.existingConfigMap) }}
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: {{ include "application-stack.oracleConfigMapName" . }}
+  labels:
+    {{- include "application-stack.labels" . | nindent 4 }}
+    app.kubernetes.io/component: oracle
+data:
+  {{- toYaml (default (dict) $config.data) | nindent 2 }}
+{{- end }}

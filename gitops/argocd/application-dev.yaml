@@ -1,0 +1,26 @@
+apiVersion: argoproj.io/v1alpha1
+kind: Application
+metadata:
+  name: application-stack-dev
+  namespace: argocd
+  finalizers:
+    - resources-finalizer.argocd.argoproj.io
+spec:
+  project: application-stack
+  source:
+    repoURL: git@github.com:Nasruddinkhan/helm-chart.git
+    targetRevision: main
+    path: .
+    helm:
+      releaseName: application-stack
+      valueFiles:
+        - environments/dev/values.yaml
+  destination:
+    server: https://kubernetes.default.svc
+    namespace: application-dev
+  syncPolicy:
+    automated:
+      prune: true
+      selfHeal: true
+    syncOptions:
+      - CreateNamespace=true

@@ -1,0 +1,36 @@
+{{- range $key, $workload := .Values.workloads }}
+{{- $autoscaling := default (dict) $workload.autoscaling }}
+{{- if and (ne $workload.enabled false) (eq $autoscaling.enabled true) }}
+---
+apiVersion: autoscaling/v2
+kind: HorizontalPodAutoscaler
+metadata:
+  name: {{ include "application-stack.workloadFullname" (list $ $key $workload) }}
+  labels:
+    {{- include "application-stack.workloadLabels" (list $ $key $workload) | nindent 4 }}
+spec:
+  scaleTargetRef:
+    apiVersion: apps/v1
+    kind: Deployment
+    name: {{ include "application-stack.workloadFullname" (list $ $key $workload) }}
+  minReplicas: {{ default 1 $autoscaling.minReplicas }}
+  maxReplicas: {{ default 3 $autoscaling.maxReplicas }}
+  metrics:
+    {{- if $autoscaling.targetCPUUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: cpu
+        target:
+          type: Utilization
+          averageUtilization: {{ $autoscaling.targetCPUUtilizationPercentage }}
+    {{- end }}
+    {{- if $autoscaling.targetMemoryUtilizationPercentage }}
+    - type: Resource
+      resource:
+        name: memory
+        target:
+          type: Utilization
+          averageUtilization: {{ $autoscaling.targetMemoryUtilizationPercentage }}
+    {{- end }}
+{{- end }}
+{{- end }}
