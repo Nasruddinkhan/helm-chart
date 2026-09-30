@@ -14,7 +14,7 @@ workloads:
   application:
     replicaCount: 2
     image:
-      repository: your-registry/application
+      repository: docker.io/nasruddinkhan/application
       tag: stable
     config:
       data:
@@ -38,7 +38,7 @@ workloads:
   configService:
     replicaCount: 2
     image:
-      repository: your-registry/config-service
+      repository: docker.io/nasruddinkhan/config-service
       tag: stable
     config:
       data:
@@ -62,7 +62,7 @@ workloads:
   ui:
     replicaCount: 2
     image:
-      repository: your-registry/ui
+      repository: docker.io/nasruddinkhan/ui
       tag: stable
     config:
       data:

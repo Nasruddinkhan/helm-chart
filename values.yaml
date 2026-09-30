@@ -40,7 +40,7 @@ workloads:
     replicaCount: 1
 
     image:
-      repository: your-registry/application
+      repository: docker.io/nasruddinkhan/application
       tag: latest
       pullPolicy: IfNotPresent
 
@@ -128,7 +128,7 @@ workloads:
     replicaCount: 1
 
     image:
-      repository: your-registry/config-service
+      repository: docker.io/nasruddinkhan/config-service
       tag: latest
       pullPolicy: IfNotPresent
 
@@ -216,7 +216,7 @@ workloads:
     replicaCount: 1
 
     image:
-      repository: your-registry/ui
+      repository: docker.io/nasruddinkhan/ui
       tag: latest
       pullPolicy: IfNotPresent
 

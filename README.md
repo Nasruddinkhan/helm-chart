@@ -36,13 +36,15 @@ helm template application-stack .
 
 ```bash
 helm upgrade --install application-stack . \
-  --set workloads.application.image.repository=registry.example.com/application \
+  --set workloads.application.image.repository=docker.io/nasruddinkhan/application \
   --set workloads.application.image.tag=1.0.0 \
-  --set workloads.configService.image.repository=registry.example.com/config-service \
+  --set workloads.configService.image.repository=docker.io/nasruddinkhan/config-service \
   --set workloads.configService.image.tag=1.0.0 \
-  --set workloads.ui.image.repository=registry.example.com/ui \
+  --set workloads.ui.image.repository=docker.io/nasruddinkhan/ui \
   --set workloads.ui.image.tag=1.0.0
 ```
+
+Docker Hub image repository names are lowercase, so this chart uses `nasruddinkhan` in image references.
 
 ## Oracle
 

@@ -102,19 +102,21 @@ Update image repositories and tags before deploying:
 workloads:
   application:
     image:
-      repository: registry.example.com/application
+      repository: docker.io/nasruddinkhan/application
       tag: 1.0.0
 
   configService:
     image:
-      repository: registry.example.com/config-service
+      repository: docker.io/nasruddinkhan/config-service
       tag: 1.0.0
 
   ui:
     image:
-      repository: registry.example.com/ui
+      repository: docker.io/nasruddinkhan/ui
       tag: 1.0.0
 ```
+
+Docker Hub image repository names are lowercase. Use `nasruddinkhan` in image paths even if the account name is written as `Nasruddinkhan`.
 
 ## Oracle Configuration
 
