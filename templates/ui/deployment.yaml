@@ -1,1 +1,0 @@
-{{- include "application-stack.workloadDeployment" (list . "ui" .Values.workloads.ui) }}

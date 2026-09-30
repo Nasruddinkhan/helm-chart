@@ -1,6 +1,6 @@
 apiVersion: v2
 name: application-stack
-description: Helm chart for an application, config-service, UI, and Oracle-backed stack.
+description: Helm chart for an application, config-service, and Oracle-backed stack.
 type: application
 version: 0.1.0
 appVersion: "1.0.0"

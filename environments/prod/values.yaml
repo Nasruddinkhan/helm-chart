@@ -58,26 +58,3 @@ workloads:
           paths:
             - path: /
               pathType: Prefix
-
-  ui:
-    replicaCount: 2
-    image:
-      repository: docker.io/nasruddinkhan/ui
-      tag: stable
-    config:
-      data:
-        API_BASE_URL: http://application-stack-application
-    resources:
-      requests:
-        cpu: 50m
-        memory: 128Mi
-      limits:
-        cpu: 250m
-        memory: 256Mi
-    ingress:
-      enabled: false
-      hosts:
-        - host: ui.example.com
-          paths:
-            - path: /
-              pathType: Prefix

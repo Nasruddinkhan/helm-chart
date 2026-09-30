@@ -4,18 +4,17 @@ This document explains how this Helm chart works and how to deploy the full appl
 
 ## What This Chart Deploys
 
-The chart deploys three Kubernetes workloads:
+The chart deploys two Kubernetes workloads:
 
 - `config-service`: configuration service, exposed inside the cluster on port `8888`
 - `application`: backend application, exposed inside the cluster on port `80`
-- `ui`: frontend UI, exposed inside the cluster on port `80`
 
 The chart also manages shared Oracle database settings:
 
 - Oracle ConfigMap for non-secret values such as host, port, service name, and JDBC URL
 - Oracle Secret for username and password
 
-By default, only `application` consumes Oracle settings. `config-service` and `ui` do not receive Oracle environment variables unless you enable them.
+By default, only `application` consumes Oracle settings. `config-service` does not receive Oracle environment variables unless you enable them.
 
 ## Repository Layout
 
@@ -34,13 +33,6 @@ By default, only `application` consumes Oracle settings. `config-service` and `u
 │   │   ├── secret.yaml
 │   │   └── service.yaml
 │   ├── config-service/
-│   │   ├── configmap.yaml
-│   │   ├── deployment.yaml
-│   │   ├── hpa.yaml
-│   │   ├── ingress.yaml
-│   │   ├── secret.yaml
-│   │   └── service.yaml
-│   ├── ui/
 │   │   ├── configmap.yaml
 │   │   ├── deployment.yaml
 │   │   ├── hpa.yaml
@@ -72,14 +64,13 @@ By default, only `application` consumes Oracle settings. `config-service` and `u
 | `templates/_workload.tpl` | Shared workload rendering logic used by each project folder |
 | `templates/application/*.yaml` | Kubernetes resources for the backend application |
 | `templates/config-service/*.yaml` | Kubernetes resources for the config service |
-| `templates/ui/*.yaml` | Kubernetes resources for the UI |
 | `templates/oracle/*.yaml` | Shared Oracle ConfigMap and Secret resources |
 | `templates/common/serviceaccount.yaml` | Shared ServiceAccount resource |
 | `environments/dev/values.yaml` | Dev overrides for GitOps or Helm installs |
 | `environments/prod/values.yaml` | Prod overrides for GitOps or Helm installs |
 | `gitops/argocd/*.yaml` | Argo CD GitOps resources |
 
-Each component folder has its own YAML files so the chart is easy to browse. The files call reusable templates from `_workload.tpl`, which keeps the generated resources consistent across `application`, `config-service`, and `ui`.
+Each component folder has its own YAML files so the chart is easy to browse. The files call reusable templates from `_workload.tpl`, which keeps the generated resources consistent across `application` and `config-service`.
 
 ## How Values Are Organized
 
@@ -90,8 +81,6 @@ workloads:
   application:
     enabled: true
   configService:
-    enabled: true
-  ui:
     enabled: true
 ```
 
@@ -129,11 +118,6 @@ workloads:
   configService:
     image:
       repository: docker.io/nasruddinkhan/config-service
-      tag: 1.0.0
-
-  ui:
-    image:
-      repository: docker.io/nasruddinkhan/ui
       tag: 1.0.0
 ```
 
@@ -277,12 +261,12 @@ workloads:
 
 ```yaml
 workloads:
-  ui:
+  application:
     ingress:
       enabled: true
       className: nginx
       hosts:
-        - host: ui.example.com
+        - host: application.example.com
           paths:
             - path: /
               pathType: Prefix
@@ -318,7 +302,7 @@ workloads:
 
 ```yaml
 workloads:
-  ui:
+  configService:
     enabled: false
 ```
 
@@ -330,7 +314,6 @@ When installed with release name `application-stack`, the main resources are:
 | --- | --- | --- |
 | application | `application-stack-application` | `application-stack-application` |
 | config-service | `application-stack-config-service` | `application-stack-config-service` |
-| ui | `application-stack-ui` | `application-stack-ui` |
 
 The Oracle resources are:
 
@@ -381,7 +364,7 @@ kubectl get applications -n argocd
 
 Before deploying, confirm:
 
-- Image repositories are correct for `application`, `config-service`, and `ui`
+- Image repositories are correct for `application` and `config-service`
 - Image tags match the version you want to deploy
 - Oracle host, port, service name, and JDBC URL are correct
 - Production Oracle credentials are stored in a Kubernetes Secret

@@ -2,11 +2,10 @@
 
 This repository contains the Helm chart and GitOps manifests for deploying the application stack.
 
-This chart deploys three configurable workloads:
+This chart deploys two configurable workloads:
 
 - `application`
 - `config-service`
-- `ui`
 
 It also manages shared Oracle database configuration for backend services.
 
@@ -39,9 +38,7 @@ helm upgrade --install application-stack . \
   --set workloads.application.image.repository=docker.io/nasruddinkhan/application \
   --set workloads.application.image.tag=1.0.0 \
   --set workloads.configService.image.repository=docker.io/nasruddinkhan/config-service \
-  --set workloads.configService.image.tag=1.0.0 \
-  --set workloads.ui.image.repository=docker.io/nasruddinkhan/ui \
-  --set workloads.ui.image.tag=1.0.0
+  --set workloads.configService.image.tag=1.0.0
 ```
 
 Docker Hub image repository names are lowercase, so this chart uses `nasruddinkhan` in image references.

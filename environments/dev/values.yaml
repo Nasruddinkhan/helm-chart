@@ -46,19 +46,3 @@ workloads:
           paths:
             - path: /
               pathType: Prefix
-
-  ui:
-    replicaCount: 1
-    image:
-      repository: docker.io/nasruddinkhan/ui
-      tag: dev
-    config:
-      data:
-        API_BASE_URL: http://application-stack-application
-    ingress:
-      enabled: false
-      hosts:
-        - host: ui.dev.local
-          paths:
-            - path: /
-              pathType: Prefix
