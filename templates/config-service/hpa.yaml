@@ -1,0 +1,1 @@
+{{- include "application-stack.workloadHpa" (list . "configService" .Values.workloads.configService) }}

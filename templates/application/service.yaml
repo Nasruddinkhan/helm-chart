@@ -1,0 +1,1 @@
+{{- include "application-stack.workloadService" (list . "application" .Values.workloads.application) }}

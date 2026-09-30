@@ -1,0 +1,1 @@
+{{- include "application-stack.workloadDeployment" (list . "application" .Values.workloads.application) }}

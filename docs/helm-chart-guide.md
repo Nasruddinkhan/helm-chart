@@ -25,15 +25,33 @@ By default, only `application` consumes Oracle settings. `config-service` and `u
 ├── values.yaml
 ├── templates/
 │   ├── _helpers.tpl
-│   ├── configmap.yaml
-│   ├── deployment.yaml
-│   ├── hpa.yaml
-│   ├── ingress.yaml
-│   ├── oracle-configmap.yaml
-│   ├── oracle-secret.yaml
-│   ├── secret.yaml
-│   ├── service.yaml
-│   └── serviceaccount.yaml
+│   ├── _workload.tpl
+│   ├── application/
+│   │   ├── configmap.yaml
+│   │   ├── deployment.yaml
+│   │   ├── hpa.yaml
+│   │   ├── ingress.yaml
+│   │   ├── secret.yaml
+│   │   └── service.yaml
+│   ├── config-service/
+│   │   ├── configmap.yaml
+│   │   ├── deployment.yaml
+│   │   ├── hpa.yaml
+│   │   ├── ingress.yaml
+│   │   ├── secret.yaml
+│   │   └── service.yaml
+│   ├── ui/
+│   │   ├── configmap.yaml
+│   │   ├── deployment.yaml
+│   │   ├── hpa.yaml
+│   │   ├── ingress.yaml
+│   │   ├── secret.yaml
+│   │   └── service.yaml
+│   ├── oracle/
+│   │   ├── configmap.yaml
+│   │   └── secret.yaml
+│   └── common/
+│       └── serviceaccount.yaml
 ├── environments/
 │   ├── dev/values.yaml
 │   └── prod/values.yaml
@@ -50,15 +68,18 @@ By default, only `application` consumes Oracle settings. `config-service` and `u
 | --- | --- |
 | `Chart.yaml` | Helm chart metadata such as chart name and version |
 | `values.yaml` | Main default configuration for all workloads |
-| `templates/deployment.yaml` | Generates Deployments for `application`, `config-service`, and `ui` |
-| `templates/service.yaml` | Generates Services for enabled workloads |
-| `templates/configmap.yaml` | Generates one ConfigMap per workload |
-| `templates/secret.yaml` | Generates optional workload-specific Secrets |
-| `templates/oracle-configmap.yaml` | Generates shared Oracle non-secret configuration |
-| `templates/oracle-secret.yaml` | Generates shared Oracle credentials Secret when enabled |
+| `templates/_helpers.tpl` | Shared naming and label helpers |
+| `templates/_workload.tpl` | Shared workload rendering logic used by each project folder |
+| `templates/application/*.yaml` | Kubernetes resources for the backend application |
+| `templates/config-service/*.yaml` | Kubernetes resources for the config service |
+| `templates/ui/*.yaml` | Kubernetes resources for the UI |
+| `templates/oracle/*.yaml` | Shared Oracle ConfigMap and Secret resources |
+| `templates/common/serviceaccount.yaml` | Shared ServiceAccount resource |
 | `environments/dev/values.yaml` | Dev overrides for GitOps or Helm installs |
 | `environments/prod/values.yaml` | Prod overrides for GitOps or Helm installs |
 | `gitops/argocd/*.yaml` | Argo CD GitOps resources |
+
+Each component folder has its own YAML files so the chart is easy to browse. The files call reusable templates from `_workload.tpl`, which keeps the generated resources consistent across `application`, `config-service`, and `ui`.
 
 ## How Values Are Organized
 

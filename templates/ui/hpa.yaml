@@ -1,0 +1,1 @@
+{{- include "application-stack.workloadHpa" (list . "ui" .Values.workloads.ui) }}
